@@ -5,21 +5,23 @@
 
 #include <SPI.h>
 #include "mcp_can.h"
+#include "sha256.h"
 
 /*SAMD core*/
 #ifdef ARDUINO_SAMD_VARIANT_COMPLIANCE
-#define SERIAL SerialUSB
 #else
 #define SERIAL Serial
 #endif
 
 // the cs pin of the version after v1.1 is default to D9
 // v0.9b and v1.0 is default D10
-const int SPI_CS_PINP = 9;
+const int SPI_CS_PIN = 9;
 const int LED        = 8;
 boolean ledON        = 1;
 
 MCP_CAN CAN(SPI_CS_PIN);                                    // Set CS pin
+
+Sha256 sha256;
 
 // Hash Based Authentication
 int groupId = 1;
@@ -30,9 +32,30 @@ unsigned long generatedKey;
 unsigned char values[8];
 bool brakesEngaged = false;
 
+void printHash(uint8_t* hashs) {
+  int i;
+  for (i=0; i<32; i++) {
+    SERIAL.print("0123456789abcdef"[hashs[i]>>4]);
+    SERIAL.print("0123456789abcdef"[hashs[i]&0xf]);
+  }
+  SERIAL.println();
+}
+
 void setup()
 {
+    uint8_t *hashs;
+    uint32_t a;
     SERIAL.begin(115200);
+
+    // SHA tests
+  SERIAL.println("Test: FIPS 180-2 B.1");
+  SERIAL.println("Expect:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+  SERIAL.print("Result:");
+  sha256.init();
+  sha256.print("abc");
+  printHash(sha256.result());
+  SERIAL.println();
+
     pinMode(LED, OUTPUT);
 
     while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
@@ -48,14 +71,19 @@ void setup()
     SERIAL.print("First generated key: ");
     SERIAL.println(generatedKey, HEX);
 
+
     delay(1000);
 }
 
 
 void loop()
 {
+
+
     unsigned char len = 0;
     unsigned char buf[8];
+
+
 
     if(CAN_MSGAVAIL == CAN.checkReceive())            // check if data coming
     {
@@ -155,7 +183,20 @@ void loop()
 
 unsigned long hash(long data)
 {
-    return (groupId + generatedKey + counter + data) * 5325 % 16777216;
+        sha256.init();
+    sha256.print(groupId + generatedKey + counter + data);
+    //Serial.print("HASH TEST ");
+   //printHash(sha256.result());
+    
+    uint8_t* result = sha256.result();
+    long hashval = 0;
+    for(int i = 0; i < 3; i++){
+        hashval = (hashval << 8) + (long)result[i];
+    }
+
+    //return atoi((const char *)sha256.result())% 16777216;
+    //return hashval;
+    return hashval % 16777216;
 }
 
 unsigned long generateKey(long previousKey, long randomValue)
