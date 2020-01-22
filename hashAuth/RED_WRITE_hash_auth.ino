@@ -173,7 +173,7 @@ void renewKey(){
   values[1] = randomValue >> 8;
 
   Serial.print("Random Value: ");
-  Serial.println(keyRenewHashRes, HEX);
+  Serial.println(randomValue, HEX);
 
   unsigned long keyRenewHashRes = keyRenewHash(generatedKey, randomValue, keyCounter);
   values[2] = keyRenewHashRes;
