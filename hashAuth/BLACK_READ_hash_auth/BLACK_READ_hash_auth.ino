@@ -97,6 +97,7 @@ void loop()
                     else
                     {
                         SERIAL.println("Brakes engaged.");
+                        brakesEngaged = true;
                     }
                 }
                 else
@@ -105,6 +106,7 @@ void loop()
                     {
 
                         SERIAL.println("Brakes loosened.");
+                        brakesEngaged = false;
                     }
                     else
                     {
