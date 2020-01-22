@@ -1,0 +1,5 @@
+{
+    "port": "/dev/ttyUSB0",
+    "board": "arduino:avr:uno",
+    "sketch": "BLACK/BLACK_READ_hash_auth.ino"
+}

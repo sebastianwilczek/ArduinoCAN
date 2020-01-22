@@ -1,3 +1,4 @@
+
 // demo: CAN-BUS Shield, receive data with check mode
 // send data coming to fast, such as less than 10ms, you can use this way
 // loovee, 2014-6-13
@@ -14,7 +15,7 @@
 
 // the cs pin of the version after v1.1 is default to D9
 // v0.9b and v1.0 is default D10
-const int SPI_CS_PIN = 9;
+const int SPI_CS_PINP = 9;
 const int LED        = 8;
 boolean ledON        = 1;
 
@@ -97,7 +98,7 @@ void loop()
                 Serial.print("Received Random Value: ");
                 Serial.println(randomValue, HEX);
 
-                unsigned long keyRenewHashRes = keyRenewHash(generatedKey, randomValue, keyCounter+1)
+                unsigned long keyRenewHashRes = keyRenewHash(generatedKey, randomValue, keyCounter+1);
                 //unsigned long keyRenewHashRes = buf[2] + (buf[3] << 8) + (buf[4] << 16);
                 values[2] = keyRenewHashRes;
                 values[3] = keyRenewHashRes >> 8;
