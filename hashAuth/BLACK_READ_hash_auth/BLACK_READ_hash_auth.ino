@@ -28,6 +28,7 @@ int keyCounter = 0;
 unsigned long presharedKey = 84364362;
 unsigned long generatedKey;
 unsigned char values[8];
+bool brakesEngaged = false;
 
 void setup()
 {
@@ -89,11 +90,26 @@ void loop()
                 SERIAL.println("Received vaild brake message.");
                 if(buf[7] == 0x01)
                 {
-                    SERIAL.println("Brakes engaged.");
+                    if(brakesEngaged)
+                    {
+                        SERIAL.println("Brakes are already engaged.");
+                    }
+                    else
+                    {
+                        SERIAL.println("Brakes engaged.");
+                    }
                 }
                 else
                 {
-                    SERIAL.println("Brakes loosened.");
+                    if(brakesEngaged)
+                    {
+
+                        SERIAL.println("Brakes loosened.");
+                    }
+                    else
+                    {
+                        SERIAL.println("Brakes are already loosened.");
+                    }
                 }
             }
         }
