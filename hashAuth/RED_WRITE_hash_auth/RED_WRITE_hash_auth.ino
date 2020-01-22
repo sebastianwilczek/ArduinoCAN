@@ -63,7 +63,6 @@ void loop() {
     values[0] = hashedValue;
     values[1] = hashedValue >> 8;
     values[2] = hashedValue >> 16;
-    values[3] = hashedValue >> 24;
 
     Serial.print("Computed Hash: ");
     Serial.println(hashedValue, HEX);
@@ -88,11 +87,10 @@ void loop() {
     Serial.println("Down");
 
     //Hash Auth
-    unsigned long hashedValue = hash(1);
+    unsigned long hashedValue = hash(0);
     values[0] = hashedValue;
     values[1] = hashedValue >> 8;
     values[2] = hashedValue >> 16;
-    values[3] = hashedValue >> 24;
 
     Serial.print("Computed Hash: ");
     Serial.println(hashedValue, HEX);

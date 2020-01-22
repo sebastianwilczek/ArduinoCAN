@@ -45,7 +45,7 @@ void setup()
     SERIAL.println("Setting up Hash Authentication.");
     generatedKey = generateKey(presharedKey, 0);
     SERIAL.print("First generated key: ");
-    SERIAL.println(generatedKey);
+    SERIAL.println(generatedKey, HEX);
     
     delay(1000);
 }
