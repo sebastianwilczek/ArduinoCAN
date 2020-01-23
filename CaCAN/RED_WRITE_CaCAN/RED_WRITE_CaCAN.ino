@@ -127,27 +127,17 @@ void loop()
         Serial.println("Click");
     }
 
+    tCAN recMessage;
     //Monitor Node:
     if (mcp2515_check_message())
     {
-        if (mcp2515_get_message(&message))
+        if (mcp2515_get_message(&recMessage))
         {
-            if(message.id == 0x01)
+            Serial.println("Received message");
+            if(recMessage.id == 0x01)
             {
-                Serial.print("ID: ");
-                Serial.print(message.id, HEX);
-                Serial.print(", ");
-                Serial.print("Data: ");
-                Serial.print(message.header.length, DEC);
-                for(int i = 0; i < message.header.length; i++)
-                {
-                    Serial.print(message.data[i], HEX);
-                    Serial.print(" ");
-                }
-                Serial.println("");
-
-                char receivedAuth = hash(message.data[7]) % 256;
-                if(message.data[7] == receivedAuth)
+                char receivedAuth = hash(recMessage.data[7]) % 256;
+                if(recMessage.data[7] == receivedAuth)
                 {
                     Serial.println("MONITOR: Legitimate brake message.");
                 }
@@ -173,13 +163,13 @@ unsigned char hash(long data)
     //printHash(sha256.result());
 
     uint8_t *result = sha256.result();
-    long hashval = 0;
+    /*long hashval = 0;
     for(int i = 0; i < 3; i++)
     {
         hashval = (hashval << 8) + (long)result[i];
-    }
+    }*/
 
     //return atoi((const char *)sha256.result())% 16777216;
     //return hashval;
-    return hashval % 256;
+    return result[0] % 256;
 }
