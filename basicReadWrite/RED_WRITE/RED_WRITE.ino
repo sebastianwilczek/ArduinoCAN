@@ -12,48 +12,52 @@
 #define RIGHT  A5
 #define CLICK  A4
 
+bool continueous = false;
 
-void setup() {
-  //Initialize analog pins as inputs
-  pinMode(UP,INPUT);
-  pinMode(DOWN,INPUT);
-  pinMode(LEFT,INPUT);
-  pinMode(RIGHT,INPUT);
-  pinMode(CLICK,INPUT);
-  
-  //Pull analog pins high to enable reading of joystick movements
-  digitalWrite(UP, HIGH);
-  digitalWrite(DOWN, HIGH);
-  digitalWrite(LEFT, HIGH);
-  digitalWrite(RIGHT, HIGH);
-  digitalWrite(CLICK, HIGH);
- 
- //Initialize serial terminal connection
-  Serial.begin(115200);
+void setup()
+{
+    //Initialize analog pins as inputs
+    pinMode(UP, INPUT);
+    pinMode(DOWN, INPUT);
+    pinMode(LEFT, INPUT);
+    pinMode(RIGHT, INPUT);
+    pinMode(CLICK, INPUT);
 
- if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
-    Serial.println("CAN Init ok");
-  else
-    Serial.println("Can't init CAN");
-    
-  delay(500);
+    //Pull analog pins high to enable reading of joystick movements
+    digitalWrite(UP, HIGH);
+    digitalWrite(DOWN, HIGH);
+    digitalWrite(LEFT, HIGH);
+    digitalWrite(RIGHT, HIGH);
+    digitalWrite(CLICK, HIGH);
+
+    //Initialize serial terminal connection
+    Serial.begin(115200);
+
+    if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
+        Serial.println("CAN Init ok");
+    else
+        Serial.println("Can't init CAN");
+
+    delay(500);
 
 }
 
 
 
-void loop() {
-  
-     tCAN message;
-  //Scan analog pins. If pin reads low, print the corresponding joystick movement.
-   
-   //Release brake
-   if (digitalRead(UP) == 0) {
-     unsigned long start;
-     unsigned long elapsed;
+void loop()
+{
 
-     start = micros();
-     Serial.println("Up");
+    tCAN message;
+    //Scan analog pins. If pin reads low, print the corresponding joystick movement.
+
+    //Release brake
+    if (digitalRead(UP) == 0 || continueous)
+    {
+        unsigned long start;
+        unsigned long elapsed;
+
+        start = micros();
+        //Serial.println("Up");
         message.id = 0x01;
         message.header.rtr = 0;
         message.header.length = 8;
@@ -65,22 +69,24 @@ void loop() {
         message.data[5] = 0x00;
         message.data[6] = 0x00;
         message.data[7] = 0x01;
-        mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
+        mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
-      elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
-      Serial.println(elapsed);
+        elapsed = micros() - start;
+        //Serial.print("Time it took to send in microseconds: ");
+        Serial.print("stdcan,send_brake,");
+        Serial.println(elapsed);
 
-        
-     }
-      
-  //Brake release
-   if (digitalRead(DOWN) == 0) {
-     unsigned long start;
-     unsigned long elapsed;
 
-     start = micros();
-      Serial.println("Down");
+    }
+
+    //Brake release
+    if (digitalRead(DOWN) == 0)
+    {
+        unsigned long start;
+        unsigned long elapsed;
+
+        start = micros();
+        //Serial.println("Down");
         message.id = 0x01;
         message.header.rtr = 0;
         message.header.length = 8;
@@ -92,20 +98,25 @@ void loop() {
         message.data[5] = 0x00;
         message.data[6] = 0x00;
         message.data[7] = 0x00;
-        mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
+        mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
         elapsed = micros() - start;
-        Serial.print("Time it took to send in microseconds: ");
-      Serial.println(elapsed);
-        }
-      
-   //Nothing   
-   if (digitalRead(LEFT) == 0) {
-       Serial.println("Left");}
-   
-   //Hack
-   if (digitalRead(RIGHT) == 0) {
-       Serial.println("Right");
+        //Serial.print("Time it took to send in microseconds: ");
+        Serial.print("stdcan,send_loose,");
+        Serial.println(elapsed);
+    }
+
+    //Nothing
+    if (digitalRead(LEFT) == 0)
+    {
+        //Serial.println("Left");
+        continueous = true;
+    }
+
+    //Hack
+    if (digitalRead(RIGHT) == 0)
+    {
+        //Serial.println("Right");
         message.id = 0x01;
         message.header.rtr = 0;
         message.header.length = 8;
@@ -117,13 +128,15 @@ void loop() {
         message.data[5] = 0x00;
         message.data[6] = 0x00;
         message.data[7] = 0x01;
-        mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
+        mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
-       }
+    }
 
-   if (digitalRead(CLICK) == 0) {
-       Serial.println("Click");}  
-           
-       delay(250);
+    if (digitalRead(CLICK) == 0)
+    {
+        //Serial.println("Click");
+        continueous = false;
+    }
 
+    delay(250);
 }

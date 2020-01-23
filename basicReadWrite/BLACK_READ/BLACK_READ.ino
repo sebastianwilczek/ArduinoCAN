@@ -7,9 +7,9 @@
 
 /*SAMD core*/
 #ifdef ARDUINO_SAMD_VARIANT_COMPLIANCE
-  #define SERIAL SerialUSB
+#define SERIAL SerialUSB
 #else
-  #define SERIAL Serial
+#define SERIAL Serial
 #endif
 
 // the cs pin of the version after v1.1 is default to D9
@@ -24,7 +24,7 @@ bool brakesEngaged = false;
 void setup()
 {
     SERIAL.begin(115200);
-    pinMode(LED,OUTPUT);
+    pinMode(LED, OUTPUT);
 
     while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
     {
@@ -44,52 +44,56 @@ void loop()
 
     if(CAN_MSGAVAIL == CAN.checkReceive())            // check if data coming
     {
-      unsigned long start;
-     unsigned long elapsed;
-     start = micros();
+        unsigned long start;
+        unsigned long elapsed;
+        start = micros();
         CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
 
         unsigned long canId = CAN.getCanId();
 
-        SERIAL.println("-----------------------------");
-        SERIAL.print("get data from ID: 0x");
-        SERIAL.println(canId, HEX);
-        SERIAL.println(buf[7], HEX);
+        //SERIAL.println("-----------------------------");
+        //SERIAL.print("get data from ID: 0x");
+        //SERIAL.println(canId, HEX);
+        //SERIAL.println(buf[7], HEX);
 
-        if(canId == 0x01 and buf[7]==0x01){
-          
-         if(brakesEngaged)
+        if(canId == 0x01 and buf[7] == 0x01)
+        {
+
+            if(brakesEngaged)
             {
-              SERIAL.println("Brakes are already engaged.");
-            }
-            else
-             {
-              SERIAL.println("Brakes engaged.");
-              brakesEngaged = true;
-              digitalWrite(LED, HIGH);
-             }
-        elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
-      Serial.println(elapsed);
-        }
-        if(canId == 0x01 and buf[7] ==0){
-          if(brakesEngaged)
-            {
-              SERIAL.println("Brakes loosened.");
-              brakesEngaged = false;
-              digitalWrite(LED, LOW);
+                //SERIAL.println("Brakes are already engaged.");
             }
             else
             {
-              SERIAL.println("Brakes are already loosened.");
+                //SERIAL.println("Brakes engaged.");
+                brakesEngaged = true;
+                digitalWrite(LED, HIGH);
             }
             elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
-      Serial.println(elapsed);
+            //Serial.print("Time it took to process in microseconds: ");
+            Serial.print("stdcan,process_brake,");
+            Serial.println(elapsed);
         }
+        if(canId == 0x01 and buf[7] == 0)
+        {
+            if(brakesEngaged)
+            {
+                //SERIAL.println("Brakes loosened.");
+                brakesEngaged = false;
+                digitalWrite(LED, LOW);
+            }
+            else
+            {
+                //SERIAL.println("Brakes are already loosened.");
+            }
+            elapsed = micros() - start;
+            //Serial.print("Time it took to send in microseconds: ");
+            Serial.print("stdcan,process_loose,");
+            Serial.println(elapsed);
         }
-        
     }
+
+}
 
 
 //END FILE
