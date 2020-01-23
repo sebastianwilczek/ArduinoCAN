@@ -149,11 +149,11 @@ void loop()
                 char receivedAuth = hash(message.data[7]) % 256;
                 if(message.data[7] == receivedAuth)
                 {
-                    write("MONITOR: Legitimate brake message.");
+                    Serial.println("MONITOR: Legitimate brake message.");
                 }
                 else
                 {
-                    write("MONITOR: Unauthorized brake message. Potentially compromised ECU. Sending error frame IN THEORY.");
+                    Serial.println("MONITOR: Unauthorized brake message. Potentially compromised ECU. Sending error frame IN THEORY.");
                 }
             }
         }
