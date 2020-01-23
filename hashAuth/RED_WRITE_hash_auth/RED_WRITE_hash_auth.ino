@@ -159,10 +159,11 @@ void loop()
         Serial.println("Right");
 
         //Hacked Hash Auth
-        unsigned long hashedValue = rand() % 16777216;
-        values[0] = hashedValue;
-        values[1] = hashedValue >> 8;
+         unsigned long hashedValue = rand() % 16777216;
+         values[0] = hashedValue;
+         values[1] = hashedValue >> 8;
         values[2] = hashedValue >> 16;
+
 
         Serial.print("Random Hash: ");
         Serial.println(hashedValue, HEX);
@@ -195,7 +196,6 @@ unsigned long hash(long data)
 {
     unsigned long key = groupId + generatedKey + counter;
     uint8_t* keyArray = (uint8_t*)(&key);
-    Serial.println(key);
     sha256.initHmac(keyArray, 4);
     sha256.print(data);
     //Serial.print("HASH TEST ");
@@ -256,5 +256,14 @@ void renewKey()
 
 unsigned long keyRenewHash(long genKey, long rValue, int c)
 {
-    return (genKey + rValue + c) * 5325 % 16777216;
+    unsigned long data = genKey + rValue + c;
+    sha256.init();
+    sha256.print(data);
+    uint8_t* result = sha256.result();
+    long hashval = 0;
+    for(int i = 0; i <3; i++){
+        hashval = (hashval << 8) + (long)result[i];
+    }
+
+    return hashval % 16777216;
 }
