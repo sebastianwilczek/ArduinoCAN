@@ -45,12 +45,13 @@ void setup()
     //Initialize serial terminal connection
     Serial.begin(115200);
 
-    //if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
-        //Serial.println("CAN Init ok");
-       // else
-            //Serial.println("Can't init CAN");
-
+    if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
+       { Serial.println("CAN Init ok");}
+        else{
+            Serial.println("Can't init CAN");
+}
             delay(1000);
+
 }
 
 void loop()
