@@ -127,6 +127,8 @@ void loop()
         Serial.println("Click");
     }
 
+    delay(250);
+
     tCAN recMessage;
     //Monitor Node:
     Serial.println("Checking for messages");
