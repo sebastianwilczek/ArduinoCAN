@@ -54,6 +54,9 @@ void loop()
         SERIAL.println(buf[7], HEX);
 
         if(canId == 0x01 and buf[7]==0x01){
+          unsigned long start;
+     unsigned long elapsed;
+     start = micros();
          if(brakesEngaged)
             {
               SERIAL.println("Brakes are already engaged.");
@@ -64,8 +67,14 @@ void loop()
               brakesEngaged = true;
               digitalWrite(LED, HIGH);
              }
+        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
         }
         if(canId == 0x01 and buf[7] ==0){
+          unsigned long start;
+         unsigned long elapsed;
+         start = micros();
           if(brakesEngaged)
             {
               SERIAL.println("Brakes loosened.");
@@ -76,6 +85,9 @@ void loop()
             {
               SERIAL.println("Brakes are already loosened.");
             }
+            elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
         }
         }
         

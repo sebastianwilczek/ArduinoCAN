@@ -49,6 +49,10 @@ void loop() {
    
    //Release brake
    if (digitalRead(UP) == 0) {
+     unsigned long start;
+     unsigned long elapsed;
+
+     start = micros();
      Serial.println("Up");
         message.id = 0x01;
         message.header.rtr = 0;
@@ -63,12 +67,19 @@ void loop() {
         message.data[7] = 0x01;
         mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
         mcp2515_send_message(&message);
-       
+      elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
+
         
      }
       
   //Brake release
    if (digitalRead(DOWN) == 0) {
+     unsigned long start;
+     unsigned long elapsed;
+
+     start = micros();
       Serial.println("Down");
         message.id = 0x01;
         message.header.rtr = 0;
@@ -83,6 +94,9 @@ void loop() {
         message.data[7] = 0x00;
         mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
         mcp2515_send_message(&message);
+        elapsed = micros() - start;
+        Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
         }
       
    //Nothing   
@@ -108,7 +122,8 @@ void loop() {
        }
 
    if (digitalRead(CLICK) == 0) {
-       Serial.println("Click");}      
+       Serial.println("Click");}  
+           
        delay(250);
 
 }
