@@ -57,7 +57,7 @@ void setup()
     digitalWrite(CLICK, HIGH);
 
     //Initialize serial terminal connection
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     Serial.println("Test: FIPS 180-2 B.1");
   Serial.println("Expect:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
@@ -84,6 +84,7 @@ void loop()
 {
     tCAN message;
     //Scan analog pins. If pin reads low, print the corresponding joystick movement.
+    //Release brake
     if (digitalRead(UP) == 0)
     {
         Serial.println("Up");
@@ -113,6 +114,7 @@ void loop()
         counter++;
     }
 
+    //Brake
     if (digitalRead(DOWN) == 0)
     {
         Serial.println("Down");
@@ -142,6 +144,7 @@ void loop()
         counter++;
     }
 
+    //New Key
     if (digitalRead(LEFT) == 0)
     {
         Serial.println("Left");
@@ -150,6 +153,7 @@ void loop()
         renewKey();
     }
 
+    //Hack
     if (digitalRead(RIGHT) == 0)
     {
         Serial.println("Right");

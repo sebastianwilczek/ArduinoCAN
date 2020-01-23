@@ -126,6 +126,7 @@ void loop()
                     {
                         SERIAL.println("Brakes engaged.");
                         brakesEngaged = true;
+                        digitalWrite(LED, HIGH);
                     }
                 }
                 else
@@ -135,6 +136,7 @@ void loop()
 
                         SERIAL.println("Brakes loosened.");
                         brakesEngaged = false;
+                        digitalWrite(LED, LOW);
                     }
                     else
                     {
