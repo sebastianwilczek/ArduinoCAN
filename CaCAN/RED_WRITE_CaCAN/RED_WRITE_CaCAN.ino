@@ -16,8 +16,6 @@
 //CaCAN
 unsigned long sharedSecret = 84364362;
 unsigned long randomNonce = 4294967295;
-unsigned long digest1;
-unsigned long digest2;
 
 Sha256 sha256;
 
@@ -158,32 +156,6 @@ void loop()
     }
 
     delay(250);
-
-    /*tCAN recMessage;
-    //Monitor Node:
-    Serial.println("Checking for messages");
-    if (mcp2515_check_message())
-    {
-        Serial.println("Retrieving message");
-        if (mcp2515_get_message(&recMessage))
-        {
-            Serial.println("Received message");
-            if(recMessage.id == 0x01)
-            {
-                unsigned char receivedAuth = hash(recMessage.data[7]) % 256;
-                if(recMessage.data[7] == receivedAuth)
-                {
-                    Serial.println("MONITOR: Legitimate brake message.");
-                }
-                else
-                {
-                    Serial.println("MONITOR: Unauthorized brake message. Potentially compromised ECU. Sending error frame IN THEORY.");
-                }
-            }
-        }
-    }
-
-    delay(250);*/
 }
 
 unsigned char hash(long data)
@@ -193,17 +165,6 @@ unsigned char hash(long data)
     Serial.println(key);
     sha256.initHmac(keyArray, 4);
     sha256.print(data);
-    //Serial.print("HASH TEST ");
-    //printHash(sha256.result());
-
     uint8_t *result = sha256.result();
-    /*long hashval = 0;
-    for(int i = 0; i < 3; i++)
-    {
-        hashval = (hashval << 8) + (long)result[i];
-    }*/
-
-    //return atoi((const char *)sha256.result())% 16777216;
-    //return hashval;
     return result[0] % 256;
 }
