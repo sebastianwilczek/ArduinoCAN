@@ -12,7 +12,7 @@
 #define RIGHT  A5
 #define CLICK  A4
 
-bool continueous = false;
+int count = -1;
 
 void setup()
 {
@@ -51,7 +51,7 @@ void loop()
     //Scan analog pins. If pin reads low, print the corresponding joystick movement.
 
     //Release brake
-    if (digitalRead(UP) == 0 || continueous)
+    if (digitalRead(UP) == 0 || (count >= 0 && count < 500))
     {
         unsigned long start;
         unsigned long elapsed;
@@ -80,7 +80,7 @@ void loop()
     }
 
     //Brake release
-    if (digitalRead(DOWN) == 0)
+    if (digitalRead(DOWN) == 0 || (count >= 500 && count < 1000))
     {
         unsigned long start;
         unsigned long elapsed;
@@ -110,7 +110,7 @@ void loop()
     if (digitalRead(LEFT) == 0)
     {
         //Serial.println("Left");
-        continueous = true;
+        count = 0;
     }
 
     //Hack
@@ -135,7 +135,7 @@ void loop()
     if (digitalRead(CLICK) == 0)
     {
         //Serial.println("Click");
-        continueous = false;
+        count = -1;
     }
 
     delay(250);
