@@ -129,7 +129,7 @@ void loop()
 
     delay(250);
 
-    tCAN recMessage;
+    /*tCAN recMessage;
     //Monitor Node:
     Serial.println("Checking for messages");
     if (mcp2515_check_message())
@@ -153,7 +153,7 @@ void loop()
         }
     }
 
-    delay(250);
+    delay(250);*/
 }
 
 unsigned char hash(long data)
