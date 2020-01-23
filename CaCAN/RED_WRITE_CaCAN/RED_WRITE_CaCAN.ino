@@ -58,7 +58,7 @@ void loop()
     tCAN message;
     //Scan analog pins. If pin reads low, print the corresponding joystick movement.
 
-    if (digitalRead(UP) == 0)
+    if (digitalRead(UP) == 0 || (counter >= 0 && counter < 500))
     {
         //start timer
         unsigned long start;
@@ -90,10 +90,11 @@ void loop()
         //Serial.print("Time it took to send in microseconds: ");
         Serial.print("cacan,send_brake,");
         Serial.println(elapsed);
+        counter++;
     }
 
     //Brake
-    if (digitalRead(DOWN) == 0)
+    if (digitalRead(DOWN) == 0 || (counter >= 500 && counter < 1000))
     {
         //start timer
         unsigned long start;
@@ -125,6 +126,7 @@ void loop()
         //Serial.print("Time it took to send in microseconds: ");
         Serial.print("cacan,send_loose,");
         Serial.println(elapsed);
+        counter++;
     }
 
     //New Key
