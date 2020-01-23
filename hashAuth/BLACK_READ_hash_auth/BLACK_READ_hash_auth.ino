@@ -102,7 +102,7 @@ void loop()
             {
                 SERIAL.println("Hash Unmatch. Potential compromised ECU.");
                 elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
+      Serial.print("Time it took to proces in microseconds: ");
       Serial.println(elapsed);
             }
             else
@@ -115,7 +115,7 @@ void loop()
                     {
                         SERIAL.println("Brakes are already engaged.");
                         elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
+      Serial.print("Time it took to proces in microseconds: ");
       Serial.println(elapsed);
                     }
                     else
@@ -124,7 +124,7 @@ void loop()
                         brakesEngaged = true;
                         digitalWrite(LED, HIGH);
                         elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
+      Serial.print("Time it took to proces in microseconds: ");
       Serial.println(elapsed);
                     }
                 }
@@ -137,14 +137,14 @@ void loop()
                         brakesEngaged = false;
                         digitalWrite(LED, LOW);
                         elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
+      Serial.print("Time it took to proces in microseconds: ");
       Serial.println(elapsed);
                     }
                     else
                     {
                         SERIAL.println("Brakes are already loosened.");
                         elapsed = micros() - start;
-      Serial.print("Time it took to send in microseconds: ");
+      Serial.print("Time it took to proces in microseconds: ");
       Serial.println(elapsed);
                     }
                 }
