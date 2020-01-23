@@ -138,5 +138,5 @@ void loop()
         count = -1;
     }
 
-    delay(250);
+    delay(50);
 }
