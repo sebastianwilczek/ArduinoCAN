@@ -21,6 +21,8 @@ Sha256 sha256;
 
 bool hacking = false;
 
+int counter = -1;
+
 void setup()
 {
     uint8_t *hashs;
@@ -44,11 +46,11 @@ void setup()
     Serial.begin(115200);
 
     if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
-        Serial.println("CAN Init ok");
-    else
-        Serial.println("Can't init CAN");
+        //Serial.println("CAN Init ok");
+        else
+            //Serial.println("Can't init CAN");
 
-    delay(1000);
+            delay(1000);
 }
 
 void loop()
@@ -58,18 +60,18 @@ void loop()
 
     if (digitalRead(UP) == 0)
     {
-                //start timer
-     unsigned long start;
-     unsigned long elapsed;
-     start = micros();
+        //start timer
+        unsigned long start;
+        unsigned long elapsed;
+        start = micros();
         //Applying brake pressure
-        Serial.println("Up");
+        //Serial.println("Up");
 
         //CaCAN
         char hashedValue = hash(1);
 
-        Serial.print("Computed Hash: ");
-        Serial.println(hashedValue, HEX);
+        //Serial.print("Computed Hash: ");
+        //Serial.println(hashedValue, HEX);
 
         message.id = 0x01;
         message.header.rtr = 0;
@@ -84,23 +86,27 @@ void loop()
         message.data[7] = 0x01;
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
+        elapsed = micros() - start;
+        //Serial.print("Time it took to send in microseconds: ");
+        Serial.print("cacan,send_brake,");
+        Serial.println(elapsed);
     }
 
     //Brake
     if (digitalRead(DOWN) == 0)
     {
-                //start timer
-     unsigned long start;
-     unsigned long elapsed;
-     start = micros();
+        //start timer
+        unsigned long start;
+        unsigned long elapsed;
+        start = micros();
         //Releasing brake pressure
-        Serial.println("Down");
+        //Serial.println("Down");
 
         //CaCAN
         unsigned char hashedValue = hash(0);
 
-        Serial.print("Computed Hash: ");
-        Serial.println(hashedValue, HEX);
+        //Serial.print("Computed Hash: ");
+        //Serial.println(hashedValue, HEX);
 
         message.id = 0x01;
         message.header.rtr = 0;
@@ -116,17 +122,18 @@ void loop()
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
         elapsed = micros() - start;
-        Serial.print("Time it took to send in microseconds: ");
+        //Serial.print("Time it took to send in microseconds: ");
+        Serial.print("cacan,send_loose,");
         Serial.println(elapsed);
     }
 
     //New Key
     if (digitalRead(LEFT) == 0)
     {
-        Serial.println("Left");
+        //Serial.println("Left");
 
         //Hacker On
-        Serial.print("Started flooding malicious messages.");
+        //Serial.print("Started flooding malicious messages.");
         hacking = true;
     }
 
@@ -134,27 +141,29 @@ void loop()
     if (digitalRead(RIGHT) == 0)
     {
 
-        Serial.println("Right");
+        //Serial.println("Right");
 
         //Hacker Off
-        Serial.print("Stopped flooding malicious messages.");
+        //Serial.print("Stopped flooding malicious messages.");
         hacking = false;
     }
 
     if (digitalRead(CLICK) == 0)
     {
-        Serial.println("Click");
+        //Serial.println("Click");
+        counter=0;
     }
 
-    if(hacking){
-                        //start timer
-     unsigned long start;
-     unsigned long elapsed;
-     start = micros();
+    if(hacking)
+    {
+        //start timer
+        unsigned long start;
+        unsigned long elapsed;
+        start = micros();
         unsigned char hashedValue = rand() % 256;
 
-        Serial.print("Random Hash: ");
-        Serial.println(hashedValue, HEX);
+        //Serial.print("Random Hash: ");
+        //Serial.println(hashedValue, HEX);
 
         message.id = 0x01;
         message.header.rtr = 0;
@@ -170,18 +179,19 @@ void loop()
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
         elapsed = micros() - start;
-        Serial.print("Time it took to send in microseconds: ");
+        //Serial.print("Time it took to send in microseconds: ");
+        Serial.print("cacan,hack_message,");
         Serial.println(elapsed);
     }
 
-    delay(27);
+    delay(50);
 }
 
 unsigned char hash(long data)
 {
     unsigned long key = randomNonce + sharedSecret;
     uint8_t *keyArray = (uint8_t *)(&key);
-    Serial.println(key);
+    //Serial.println(key);
     sha256.initHmac(keyArray, 4);
     sha256.print(data);
     uint8_t *result = sha256.result();

@@ -37,11 +37,11 @@ void setup()
 
     while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
     {
-        SERIAL.println("CAN BUS Shield init fail");
-        SERIAL.println("Init CAN BUS Shield again");
+        //SERIAL.println("CAN BUS Shield init fail");
+        //SERIAL.println("Init CAN BUS Shield again");
         delay(100);
     }
-    SERIAL.println("CAN BUS Shield init ok!");
+    //SERIAL.println("CAN BUS Shield init ok!");
 
     delay(1000);
 }
@@ -55,9 +55,9 @@ void loop()
     if(CAN_MSGAVAIL == CAN.checkReceive())            // check if data coming
     {
         //start timer
-     unsigned long start;
-     unsigned long elapsed;
-     start = micros();
+        unsigned long start;
+        unsigned long elapsed;
+        start = micros();
         CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
         unsigned long canId = CAN.getCanId();
         if(canId == 0x01)
@@ -65,23 +65,25 @@ void loop()
             unsigned char receivedAuth = hash(buf[7]) % 256;
             if(buf[6] == receivedAuth)
             {
-                Serial.println("MONITOR: Legitimate brake message.");
+                //Serial.println("MONITOR: Legitimate brake message.");
                 if(buf[7] == 0x01)
                 {
                     if(brakesEngaged)
                     {
-                        SERIAL.println("Brakes are already engaged.");
-                            elapsed = micros() - start;
-                            Serial.print("Time it took to proces in microseconds: ");
-                            Serial.println(elapsed);
+                        //SERIAL.println("Brakes are already engaged.");
+                        elapsed = micros() - start;
+                        //Serial.print("Time it took to proces in microseconds: ");
+                        Serial.print("cacan,process_brake,");
+                        Serial.println(elapsed);
                     }
                     else
                     {
-                        SERIAL.println("Brakes engaged.");
+                        //SERIAL.println("Brakes engaged.");
                         brakesEngaged = true;
                         digitalWrite(LED, HIGH);
                         elapsed = micros() - start;
-                        Serial.print("Time it took to proces in microseconds: ");
+                        //Serial.print("Time it took to proces in microseconds: ");
+                        Serial.print("cacan,process_brake,");
                         Serial.println(elapsed);
                     }
                 }
@@ -90,27 +92,30 @@ void loop()
                     if(brakesEngaged)
                     {
 
-                        SERIAL.println("Brakes loosened.");
+                        //SERIAL.println("Brakes loosened.");
                         brakesEngaged = false;
                         digitalWrite(LED, LOW);
                         elapsed = micros() - start;
-                        Serial.print("Time it took to send in microseconds: ");
+                        //Serial.print("Time it took to send in microseconds: ");
+                        Serial.print("cacan,process_loose,");
                         Serial.println(elapsed);
                     }
                     else
                     {
-                        SERIAL.println("Brakes are already loosened.");
+                        //SERIAL.println("Brakes are already loosened.");
                         elapsed = micros() - start;
-                        Serial.print("Time it took to proces in microseconds: ");
+                        //Serial.print("Time it took to proces in microseconds: ");
+                        Serial.print("cacan,process_loose,");
                         Serial.println(elapsed);
                     }
                 }
             }
             else
             {
-                Serial.println("MONITOR: Unauthorized brake message. Potentially compromised ECU. Sending error frame IN THEORY.");
+                //Serial.println("MONITOR: Unauthorized brake message. Potentially compromised ECU. Sending error frame IN THEORY.");
                 elapsed = micros() - start;
-                Serial.print("Time it took to proces in microseconds: ");
+                //Serial.print("Time it took to proces in microseconds: ");
+                Serial.print("cacan,process_unauth,");
                 Serial.println(elapsed);
             }
         }
@@ -121,7 +126,7 @@ unsigned char hash(long data)
 {
     unsigned long key = randomNonce + sharedSecret;
     uint8_t *keyArray = (uint8_t *)(&key);
-    Serial.println(key);
+    //Serial.println(key);
     sha256.initHmac(keyArray, 4);
     sha256.print(data);
     uint8_t *result = sha256.result();
