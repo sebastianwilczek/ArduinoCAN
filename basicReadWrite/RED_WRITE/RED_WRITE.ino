@@ -75,8 +75,7 @@ void loop()
         //Serial.print("Time it took to send in microseconds: ");
         Serial.print("stdcan,send_brake,");
         Serial.println(elapsed);
-
-
+        count++;
     }
 
     //Brake release
@@ -104,6 +103,7 @@ void loop()
         //Serial.print("Time it took to send in microseconds: ");
         Serial.print("stdcan,send_loose,");
         Serial.println(elapsed);
+        count++;
     }
 
     //Nothing
