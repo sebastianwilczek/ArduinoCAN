@@ -23,6 +23,7 @@ MCP_CAN CAN(SPI_CS_PIN);                                    // Set CS pin
 
 unsigned long sharedSecret = 84364362;
 unsigned long randomNonce = 4294967295;
+bool brakesEngaged = false;
 
 Sha256 sha256;
 
