@@ -58,8 +58,8 @@ void loop()
         unsigned long canId = CAN.getCanId();
         if(canId == 0x01)
         {
-            unsigned char receivedAuth = hash(recMessage.data[7]) % 256;
-            if(recMessage.data[6] == receivedAuth)
+            unsigned char receivedAuth = hash(buf[7]) % 256;
+            if(buf[6] == receivedAuth)
             {
                 Serial.println("MONITOR: Legitimate brake message.");
                 if(buf[7] == 0x01)
