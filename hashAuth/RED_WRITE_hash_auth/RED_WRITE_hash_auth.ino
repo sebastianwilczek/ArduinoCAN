@@ -193,8 +193,11 @@ void loop()
 
 unsigned long hash(long data)
 {
-    sha256.init();
-    sha256.print(groupId + generatedKey + counter + data);
+    unsigned long key = groupId + generatedKey + counter;
+    uint8_t* keyArray = (uint8_t*)(&key);
+    Serial.println(key);
+    sha256.initHmac(keyArray, 4);
+    sha256.print(data);
     //Serial.print("HASH TEST ");
     //printHash(sha256.result());
     
@@ -211,7 +214,7 @@ unsigned long hash(long data)
 
 unsigned long generateKey(long previousKey, long randomValue)
 {
-    return (previousKey + randomValue + keyCounter) % 100000000;
+    return (previousKey + randomValue + keyCounter) % 4294967296;
 }
 
 void renewKey()
