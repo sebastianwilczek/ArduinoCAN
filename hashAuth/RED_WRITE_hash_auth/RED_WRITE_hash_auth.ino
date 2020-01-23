@@ -64,10 +64,10 @@ void setup()
     Serial.begin(115200);
 
     if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
-        //Serial.println("CAN Init ok");
-    else
-        //Serial.println("Can't init CAN");
-
+        {Serial.println("CAN Init ok");}
+    else{
+        Serial.println("Can't init CAN");
+    }
     //Serial.println("Setting up Hash Authentication.");
     generatedKey = generateKey(presharedKey, 0);
     //Serial.print("First generated key: ");
