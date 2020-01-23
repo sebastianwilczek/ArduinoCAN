@@ -90,7 +90,7 @@ void loop()
         Serial.println("Down");
 
         //CaCAN
-        char hashedValue = hash(0);
+        unsigned char hashedValue = hash(0);
 
         Serial.print("Computed Hash: ");
         Serial.println(hashedValue, HEX);
@@ -129,14 +129,16 @@ void loop()
 
     tCAN recMessage;
     //Monitor Node:
+    Serial.println("Checking for messages");
     if (mcp2515_check_message())
     {
+        Serial.println("Retrieving message");
         if (mcp2515_get_message(&recMessage))
         {
             Serial.println("Received message");
             if(recMessage.id == 0x01)
             {
-                char receivedAuth = hash(recMessage.data[7]) % 256;
+                unsigned char receivedAuth = hash(recMessage.data[7]) % 256;
                 if(recMessage.data[7] == receivedAuth)
                 {
                     Serial.println("MONITOR: Legitimate brake message.");
