@@ -58,6 +58,10 @@ void loop()
 
     if (digitalRead(UP) == 0)
     {
+                //start timer
+     unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         //Applying brake pressure
         Serial.println("Up");
 
@@ -85,6 +89,10 @@ void loop()
     //Brake
     if (digitalRead(DOWN) == 0)
     {
+                //start timer
+     unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         //Releasing brake pressure
         Serial.println("Down");
 
@@ -107,6 +115,9 @@ void loop()
         message.data[7] = 0x00;
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
+        elapsed = micros() - start;
+        Serial.print("Time it took to send in microseconds: ");
+        Serial.println(elapsed);
     }
 
     //New Key
@@ -122,6 +133,7 @@ void loop()
     //Hack
     if (digitalRead(RIGHT) == 0)
     {
+
         Serial.println("Right");
 
         //Hacker Off
@@ -135,6 +147,10 @@ void loop()
     }
 
     if(hacking){
+                        //start timer
+     unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         unsigned char hashedValue = rand() % 256;
 
         Serial.print("Random Hash: ");
@@ -153,9 +169,12 @@ void loop()
         message.data[7] = 0x01;
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
+        elapsed = micros() - start;
+        Serial.print("Time it took to send in microseconds: ");
+        Serial.println(elapsed);
     }
 
-    delay(250);
+    delay(27);
 }
 
 unsigned char hash(long data)

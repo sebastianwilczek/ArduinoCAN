@@ -9,8 +9,9 @@
 
 /*SAMD core*/
 #ifdef ARDUINO_SAMD_VARIANT_COMPLIANCE
+    #define SERIAL SerialUSB
 #else
-#define SERIAL Serial
+    #define SERIAL Serial
 #endif
 
 // the cs pin of the version after v1.1 is default to D9
@@ -45,17 +46,7 @@ void setup()
 {
     uint8_t *hashs;
     uint32_t a;
-    SERIAL.begin(115200);
-
-    // SHA tests
-  SERIAL.println("Test: FIPS 180-2 B.1");
-  SERIAL.println("Expect:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
-  SERIAL.print("Result:");
-  sha256.init();
-  sha256.print("abc");
-  printHash(sha256.result());
-  SERIAL.println();
-
+    SERIAL.begin(115200);    
     pinMode(LED, OUTPUT);
 
     while (CAN_OK != CAN.begin(CAN_500KBPS))              // init can bus : baudrate = 500k
@@ -72,21 +63,20 @@ void setup()
     SERIAL.println(generatedKey, HEX);
 
 
-    delay(1000);
+    delay(500);
 }
 
 
 void loop()
 {
-
-
     unsigned char len = 0;
     unsigned char buf[8];
 
-
-
     if(CAN_MSGAVAIL == CAN.checkReceive())            // check if data coming
     {
+     unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
 
         unsigned long canId = CAN.getCanId();
@@ -111,6 +101,9 @@ void loop()
             if(values[0] != buf[4] || values[1] != buf[5] || values[2] != buf[6])
             {
                 SERIAL.println("Hash Unmatch. Potential compromised ECU.");
+                elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
             }
             else
             {
@@ -121,12 +114,18 @@ void loop()
                     if(brakesEngaged)
                     {
                         SERIAL.println("Brakes are already engaged.");
+                        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
                     }
                     else
                     {
                         SERIAL.println("Brakes engaged.");
                         brakesEngaged = true;
                         digitalWrite(LED, HIGH);
+                        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
                     }
                 }
                 else
@@ -137,10 +136,16 @@ void loop()
                         SERIAL.println("Brakes loosened.");
                         brakesEngaged = false;
                         digitalWrite(LED, LOW);
+                        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
                     }
                     else
                     {
                         SERIAL.println("Brakes are already loosened.");
+                        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
                     }
                 }
             }

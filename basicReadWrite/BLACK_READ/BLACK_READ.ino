@@ -44,6 +44,9 @@ void loop()
 
     if(CAN_MSGAVAIL == CAN.checkReceive())            // check if data coming
     {
+      unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
 
         unsigned long canId = CAN.getCanId();
@@ -54,9 +57,7 @@ void loop()
         SERIAL.println(buf[7], HEX);
 
         if(canId == 0x01 and buf[7]==0x01){
-          unsigned long start;
-     unsigned long elapsed;
-     start = micros();
+          
          if(brakesEngaged)
             {
               SERIAL.println("Brakes are already engaged.");
@@ -72,9 +73,6 @@ void loop()
       Serial.println(elapsed);
         }
         if(canId == 0x01 and buf[7] ==0){
-          unsigned long start;
-         unsigned long elapsed;
-         start = micros();
           if(brakesEngaged)
             {
               SERIAL.println("Brakes loosened.");

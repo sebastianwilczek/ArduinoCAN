@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:uno",
+    "port": "/dev/ttyACM1",
+    "sketch": "RED_WRITE.ino",
+    "programmer": "AVRISP mkII"
+}

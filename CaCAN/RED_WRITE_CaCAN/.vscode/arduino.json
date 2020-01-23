@@ -2,5 +2,5 @@
     "port": "/dev/ttyACM1",
     "board": "arduino:avr:uno",
     "programmer": "AVRISP mkII",
-    "sketch": "RED_WRITE_hash_auth.ino"
+    "sketch": "RED_WRITE_CaCAN.ino"
 }

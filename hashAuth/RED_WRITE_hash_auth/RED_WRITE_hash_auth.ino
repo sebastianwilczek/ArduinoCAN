@@ -59,14 +59,6 @@ void setup()
     //Initialize serial terminal connection
     Serial.begin(115200);
 
-    Serial.println("Test: FIPS 180-2 B.1");
-  Serial.println("Expect:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
-  Serial.print("Result:");
-  sha256.init();
-  sha256.print("abc");
-  printHash(sha256.result());
-  Serial.println();
-
     if(Canbus.init(CANSPEED_500))  //Initialise MCP2515 CAN controller at the specified speed
         Serial.println("CAN Init ok");
     else
@@ -77,16 +69,22 @@ void setup()
     Serial.print("First generated key: ");
     Serial.println(generatedKey, HEX);
 
-    delay(1000);
+    delay(500);
 }
 
 void loop()
 {
     tCAN message;
     //Scan analog pins. If pin reads low, print the corresponding joystick movement.
+    
     //Release brake
     if (digitalRead(UP) == 0)
     {
+        //Timer
+        unsigned long start;
+     unsigned long elapsed;
+     start = micros();
+
         Serial.println("Up");
 
         //Hash Auth
@@ -112,11 +110,17 @@ void loop()
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
         counter++;
+        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
     }
 
     //Brake
     if (digitalRead(DOWN) == 0)
     {
+    unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         Serial.println("Down");
 
         //Hash Auth
@@ -142,11 +146,15 @@ void loop()
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
         counter++;
+        elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
     }
 
     //New Key
     if (digitalRead(LEFT) == 0)
     {
+
         Serial.println("Left");
 
         Serial.println("Starting key renewal");
@@ -156,6 +164,9 @@ void loop()
     //Hack
     if (digitalRead(RIGHT) == 0)
     {
+     unsigned long start;
+     unsigned long elapsed;
+     start = micros();
         Serial.println("Right");
 
         //Hacked Hash Auth
@@ -181,7 +192,9 @@ void loop()
         message.data[7] = 0x01;
         mcp2515_bit_modify(CANCTRL, (1 << REQOP2) | (1 << REQOP1) | (1 << REQOP0), 0);
         mcp2515_send_message(&message);
-
+      elapsed = micros() - start;
+      Serial.print("Time it took to send in microseconds: ");
+      Serial.println(elapsed);
     }
 
     if (digitalRead(CLICK) == 0)
