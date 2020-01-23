@@ -19,6 +19,7 @@ const int LED        = 8;
 boolean ledON        = 1;
 
 MCP_CAN CAN(SPI_CS_PIN);                                    // Set CS pin
+bool brakesEngaged = false;
 
 void setup()
 {
@@ -32,6 +33,7 @@ void setup()
         delay(100);
     }
     SERIAL.println("CAN BUS Shield init ok!");
+    delay(500);
 }
 
 
@@ -51,15 +53,29 @@ void loop()
         SERIAL.println(canId, HEX);
         SERIAL.println(buf[7], HEX);
 
-        if(canId == 0x01 and buf[7]==1){
-          ledON == 1;
-          SERIAL.println("Brakes engaged.");
-        
+        if(canId == 0x01 and buf[7]==0x01){
+         if(brakesEngaged)
+            {
+              SERIAL.println("Brakes are already engaged.");
+            }
+            else
+             {
+              SERIAL.println("Brakes engaged.");
+              brakesEngaged = true;
+              digitalWrite(LED, HIGH);
+             }
         }
         if(canId == 0x01 and buf[7] ==0){
-          ledON == 0;
-          SERIAL.println("Brakes loosened.");
-        
+          if(brakesEngaged)
+            {
+              SERIAL.println("Brakes loosened.");
+              brakesEngaged = false;
+              digitalWrite(LED, LOW);
+            }
+            else
+            {
+              SERIAL.println("Brakes are already loosened.");
+            }
         }
         }
         
